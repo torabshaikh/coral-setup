@@ -6,7 +6,7 @@ import time
 from edgetpu.detection.engine import DetectionEngine
 from edgetpu.utils import dataset_utils
 import cv2
-  
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Face detection")
@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     modelFile = "./model/face_detection.tflite"
     engine = DetectionEngine(args.model)
-    
+
     print('Initialized network')
     outputFolder = "output-dnn-videos"
     if not os.path.exists(outputFolder):
@@ -51,11 +51,8 @@ if __name__ == "__main__":
 
         frame_count += 1
         t = time.time()
-        objs = engine.detect_with_image(img,
-                                  threshold=0.05,
-                                  keep_aspect_ratio=args.keep_aspect_ratio,
-                                  relative_coord=False,
-                                  top_k=10)
+        objs = engine.detect_with_image(
+            img, threshold=0.05, keep_aspect_ratio=True, relative_coord=False, top_k=10)
         # Print and draw detected objects.
         for obj in objs:
             print('-----------------------------------------')
