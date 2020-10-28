@@ -4,7 +4,6 @@ import argparse
 import os
 import time
 from edgetpu.detection.engine import DetectionEngine
-from edgetpu.utils import dataset_utils
 import cv2
 
 if __name__ == "__main__":
