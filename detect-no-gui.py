@@ -65,16 +65,16 @@ if __name__ == "__main__":
             print('Result: ', obj, 'Box: ', box)
             cv2.rectangle(
                 frame,
-                (box[0], box[1]),
-                (box[2], box[3]),
+                (int(box[0]), int(box[1])),
+                (int(box[2]), int(box[3])),
                 (0, 255, 0),
-                int(round(frameHeight = frame.shape[0] / 150)),
+                2,
                 8,
             )
             cv2.putText(
                 frame,
-                obj.score,
-                (10, 50),
+                str(obj.score),
+                (int(box[0]), int(box[1])),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 1.3,
                 (0, 0, 255),
@@ -84,6 +84,16 @@ if __name__ == "__main__":
         tt_opencvDnn += time.time() - t
         fpsOpencvDnn = frame_count / tt_opencvDnn
         print('FPS: ', fpsOpencvDnn)
+        cv2.putText(
+                frame,
+                "FPS: "+str(fpsOpencvDnn),
+                (10, 50),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1.3,
+                (0, 0, 255),
+                3,
+                cv2.LINE_AA,
+            )
         # cv2.imshow("Face Detection Comparison", outOpencvDnn)
         if vid_writer is not None:
             vid_writer.write(frame)

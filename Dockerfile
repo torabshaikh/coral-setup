@@ -26,7 +26,7 @@ RUN pip install pillow --upgrade
 RUN pip install opencv-python
 RUN pip install opencv-contrib-python
 RUN pip install imutils
-RUN ls ../
+RUN echo "test1"
 RUN git clone https://github.com/torabshaikh/coral-setup.git
 WORKDIR /coral-detect/coral-setup
 RUN wget https://github.com/intel-iot-devkit/sample-videos/raw/master/face-demographics-walking-and-pause.mp4
