@@ -27,7 +27,7 @@ if __name__ == "__main__":
     if not os.path.exists(outputFolder):
         os.makedirs(outputFolder)
 
-    cap = cv2.VideoCapture('./face-demographics-walking-and-pause.mp4')
+    cap = cv2.VideoCapture('./sample.mp4')
     outputFile = "capture" + ".avi"
 
     vid_writer = None

@@ -26,10 +26,10 @@ RUN pip install pillow --upgrade
 RUN pip install opencv-python
 RUN pip install opencv-contrib-python
 RUN pip install imutils
-RUN echo "test1"
-RUN git clone https://github.com/torabshaikh/coral-setup.git
+RUN mkdir coral-setup
+COPY src /coral-detect/coral-setup
+COPY face-demographics-walking-and-pause.mp4 /coral-detect/coral-setup/sample.mp4
 WORKDIR /coral-detect/coral-setup
-RUN wget https://github.com/intel-iot-devkit/sample-videos/raw/master/face-demographics-walking-and-pause.mp4
 RUN mkdir model
 RUN wget https://dl.google.com/coral/canned_models/mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite -O model/face_detection.tflite
 
