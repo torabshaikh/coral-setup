@@ -5,6 +5,7 @@ import os
 import time
 from edgetpu.detection.engine import DetectionEngine
 import cv2
+from PIL import Image
 
 if __name__ == "__main__":
 
@@ -19,26 +20,26 @@ if __name__ == "__main__":
     # 2. 8 bit Quantized version using TensorFlow ( 2.7 MB )
 
     modelFile = "./model/face_detection.tflite"
-    engine = DetectionEngine(args.model)
+    engine = DetectionEngine(modelFile)
 
     print('Initialized network')
     outputFolder = "output-dnn-videos"
     if not os.path.exists(outputFolder):
         os.makedirs(outputFolder)
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture('./face-demographics-walking-and-pause.mp4')
     outputFile = "capture" + ".avi"
 
-    vid_writer = None
+    # vid_writer = None
     hasFrame, frame = cap.read()
     print('hasFrame: ', hasFrame)
-    if frame is not None:
-        vid_writer = cv2.VideoWriter(
-            os.path.join(outputFolder, outputFile),
-            cv2.VideoWriter_fourcc("M", "J", "P", "G"),
-            15,
-            (frame.shape[1], frame.shape[0]),
-        )
+    # if frame is not None:
+    #     vid_writer = cv2.VideoWriter(
+    #         os.path.join(outputFolder, outputFile),
+    #         cv2.VideoWriter_fourcc("M", "J", "P", "G"),
+    #         15,
+    #         (frame.shape[1], frame.shape[0]),
+    #     )
 
     frame_count = 0
     tt_opencvDnn = 0
@@ -50,14 +51,16 @@ if __name__ == "__main__":
 
         frame_count += 1
         t = time.time()
-        objs = engine.detect_with_image(
-            img, threshold=0.05, keep_aspect_ratio=True, relative_coord=False, top_k=10)
+        img = Image.fromarray(frame.astype('uint8'), 'RGB')
+        objs = engine.detect_with_image(img, threshold=0.01, keep_aspect_ratio=True, relative_coord=False, top_k=10)
+        print('Number of objects: ', len(objs))
         # Print and draw detected objects.
         for obj in objs:
             print('-----------------------------------------')
-            print(obj.label_id)
-            print('score =', obj.score)
+            # print(obj.label_id)
+            # print('score =', obj.score)
             box = obj.bounding_box.flatten().tolist()
+            print('Result: ', obj, 'Box: ', box)
         tt_opencvDnn += time.time() - t
         fpsOpencvDnn = frame_count / tt_opencvDnn
         print('FPS: ', fpsOpencvDnn)
@@ -75,8 +78,8 @@ if __name__ == "__main__":
         # )
 
         # cv2.imshow("Face Detection Comparison", outOpencvDnn)
-        if vid_writer is not None:
-            vid_writer.write(outOpencvDnn)
+        # if vid_writer is not None:
+        #     vid_writer.write(frame)
 
         if frame_count == 1:
             tt_opencvDnn = 0
@@ -86,5 +89,5 @@ if __name__ == "__main__":
         #     break
 
     cv2.destroyAllWindows()
-    if vid_writer is not None:
-        vid_writer.release()
+    # if vid_writer is not None:
+    #     vid_writer.release()

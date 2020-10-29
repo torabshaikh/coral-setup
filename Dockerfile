@@ -18,12 +18,15 @@ RUN echo "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main" |
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 RUN apt-get -y update
 RUN python -m pip install numpy
-
+RUN apt-get install -y libgtk2.0-dev pkg-config libgl1-mesa-glx
 RUN apt-get install -y libedgetpu1-std
 RUN apt-get install -y python3-edgetpu
 RUN dpkg -L python3-edgetpu
-RUN pip install opencv-contrib-python==4.1.0.25
+RUN pip install pillow --upgrade
+RUN pip install opencv-python
+RUN pip install opencv-contrib-python
 RUN pip install imutils
+RUN pwd
 RUN git clone https://github.com/torabshaikh/coral-setup.git
 WORKDIR /coral-detect/coral-setup
 RUN wget https://github.com/intel-iot-devkit/sample-videos/raw/master/face-demographics-walking-and-pause.mp4
