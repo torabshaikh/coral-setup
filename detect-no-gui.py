@@ -30,16 +30,16 @@ if __name__ == "__main__":
     cap = cv2.VideoCapture('./face-demographics-walking-and-pause.mp4')
     outputFile = "capture" + ".avi"
 
-    # vid_writer = None
+    vid_writer = None
     hasFrame, frame = cap.read()
     print('hasFrame: ', hasFrame)
-    # if frame is not None:
-    #     vid_writer = cv2.VideoWriter(
-    #         os.path.join(outputFolder, outputFile),
-    #         cv2.VideoWriter_fourcc("M", "J", "P", "G"),
-    #         15,
-    #         (frame.shape[1], frame.shape[0]),
-    #     )
+    if frame is not None:
+        vid_writer = cv2.VideoWriter(
+            os.path.join(outputFolder, outputFile),
+            cv2.VideoWriter_fourcc("M", "J", "P", "G"),
+            15,
+            (frame.shape[1], frame.shape[0]),
+        )
 
     frame_count = 0
     tt_opencvDnn = 0
@@ -52,34 +52,41 @@ if __name__ == "__main__":
         frame_count += 1
         t = time.time()
         img = Image.fromarray(frame.astype('uint8'), 'RGB')
-        objs = engine.detect_with_image(img, threshold=0.01, keep_aspect_ratio=True, relative_coord=False, top_k=10)
+        objs = engine.detect_with_image(
+            img, threshold=0.01, keep_aspect_ratio=True, relative_coord=False, top_k=10)
         print('Number of objects: ', len(objs))
         # Print and draw detected objects.
         for obj in objs:
             print('-----------------------------------------')
             # print(obj.label_id)
             # print('score =', obj.score)
-            box = obj.bounding_box.flatten().tolist()
+            # [[x1, y1], [x2, y2]]
+            box = obj.bounding_box.flatten()
             print('Result: ', obj, 'Box: ', box)
+            cv2.rectangle(
+                frame,
+                (box[0], box[1]),
+                (box[2], box[3]),
+                (0, 255, 0),
+                int(round(frameHeight = frame.shape[0] / 150)),
+                8,
+            )
+            cv2.putText(
+                frame,
+                obj.score,
+                (10, 50),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1.3,
+                (0, 0, 255),
+                3,
+                cv2.LINE_AA,
+            )
         tt_opencvDnn += time.time() - t
         fpsOpencvDnn = frame_count / tt_opencvDnn
         print('FPS: ', fpsOpencvDnn)
-        # label = "OpenCV DNN {} FPS : {:.2f}".format(
-        #     device.upper(), fpsOpencvDnn)
-        # cv2.putText(
-        #     outOpencvDnn,
-        #     label,
-        #     (10, 50),
-        #     cv2.FONT_HERSHEY_SIMPLEX,
-        #     1.3,
-        #     (0, 0, 255),
-        #     3,
-        #     cv2.LINE_AA,
-        # )
-
         # cv2.imshow("Face Detection Comparison", outOpencvDnn)
-        # if vid_writer is not None:
-        #     vid_writer.write(frame)
+        if vid_writer is not None:
+            vid_writer.write(frame)
 
         if frame_count == 1:
             tt_opencvDnn = 0
@@ -89,5 +96,5 @@ if __name__ == "__main__":
         #     break
 
     cv2.destroyAllWindows()
-    # if vid_writer is not None:
-    #     vid_writer.release()
+    if vid_writer is not None:
+        vid_writer.release()
